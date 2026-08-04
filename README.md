@@ -42,5 +42,19 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Connected Kerb is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/connected-kerb_stock/
+Connected Kerb is a UK electric-vehicle charging company that designs, installs, owns and operates public on-street and destination charge points, with a particular focus on residential drivers who have no off-street parking. Founded in 2017 and headquartered in London, it delivers long-term charging concessions for local authorities, workplaces, retail destinations, car parks and residential developers, and by mid-2026 operated roughly 7,800 public chargers across about 1,780 UK locations.
+
+## API surface
+
+Connected Kerb operates two real, standards-based API surfaces on its own hosts, and documents neither of them:
+
+- **OCPI (CPO)** — `https://cp.connectedkerb.com/ocpi/` — versions 2.1.1, 2.2 and 2.2.1 are all live and token-gated per the Open Charge Point Interface credentials module. This is also the machine-readable format the UK Public Charge Point Regulations 2023 name for public charge point data.
+- **Charge point platform API** — `https://cp.connectedkerb.com/public-api/` — a server-to-server API for charge points, EVSEs, locations, sessions, users, tariffs and roaming. The contract governing it is published by the platform vendor, not by Connected Kerb.
+
+There is no Connected Kerb developer portal, API reference, OpenAPI description, SDK, sandbox, status page, API changelog, `security.txt` or agent card. See `llms/connected-kerb-llms.txt` for the full picture and `conformance/`, `authentication/`, `conventions/`, `errors/`, `lifecycle/` and `security/` for the evidence.
+
+## Links
+
+- https://www.connectedkerb.com/
+- https://portal.connectedkerb.com/
+- https://forgeglobal.com/connected-kerb_stock/ (secondary-market profile, harvest source)

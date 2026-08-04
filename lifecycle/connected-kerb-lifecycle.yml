@@ -1,0 +1,65 @@
+generated: '2026-08-04'
+method: searched
+source: >-
+  live probes of https://cp.connectedkerb.com and https://www.connectedkerb.com plus
+  the platform backward-compatibility contract at
+  https://developers.ampeco.com/reference/backward-compatibility and the platform
+  OpenAPI (Public API v3.226.0)
+versioning:
+  scheme: uri-path, per resource
+  platform_api_form: /public-api/resources/{resource}/v1.0
+  ocpi_form: /ocpi/{version}
+  ocpi_versions_live: ['2.1.1', '2.2', '2.2.1']
+  running_build: 3.225.1 (observed in the X-App-Version response header on
+    Connected Kerb's tenant; the published contract was at 3.226.0 on the probe date)
+  simultaneous_versions: true
+  docs: https://developers.ampeco.com/reference/backward-compatibility
+deprecation:
+  policy_published_by_provider: false
+  policy_published_by_platform: true
+  policy_url: https://developers.ampeco.com/reference/backward-compatibility
+  notice_period: at least 6 months between deprecation announcement and removal
+  sunset_header: false
+  rfc8594: false
+  deprecated_operations_in_governing_contract: 97
+  example: >-
+    "Roaming Provider / Create" is marked deprecated with a stated removal date of
+    Fri, 30 Oct 2026, superseded by /resources/roaming-emsps/v1.0
+  principles:
+  - existing functionality is preserved; response enrichment is additive only
+  - response fields are not removed
+  - new behaviour arrives as a new endpoint version (v2, v3) rather than a mutation
+  - two versions of one endpoint may run simultaneously
+  note: >-
+    This policy is the platform vendor's, announced through vendor channels.
+    Connected Kerb publishes no deprecation policy of its own and no notification
+    channel for its own API consumers, so no Deprecation pointer is wired in
+    apis.yml - a Connected Kerb integrator has no provider-side commitment to rely on.
+status_page:
+  url: null
+  probed:
+  - {url: 'https://status.connectedkerb.com', result: NXDOMAIN}
+  - {url: 'https://uptime.connectedkerb.com', result: NXDOMAIN}
+  - {url: 'https://www.connectedkerb.com/status', http_status: 404}
+  note: no status or uptime page found on any Connected Kerb host; no StatusPage
+    pointer is wired
+sla:
+  url: null
+  uptime_target: null
+  note: no public SLA or uptime commitment published for either API surface
+changelog:
+  provider_changelog: null
+  platform_changelog: https://developers.ampeco.com/changelog
+  note: >-
+    the platform publishes a weekly-cadence changelog for the contract Connected
+    Kerb's API runs on; Connected Kerb publishes no API changelog. Its
+    stories-reports-and-events feed is corporate news, not release notes, so no
+    ChangeLog pointer is wired.
+deprecated_operations: []
+gaps:
+- No provider-published versioning policy, deprecation policy, status page, SLA or
+  API changelog.
+- No Sunset or Deprecation response headers (RFC 8594) on either surface.
+- The running tenant build trails the published contract version, so contract-first
+  clients can encounter endpoints that are documented but not yet deployed - the
+  disabled OAuth token endpoint is a live example of that class of drift.

@@ -1,0 +1,51 @@
+generated: '2026-08-04'
+method: probed
+source: live GET probes of /.well-known/* on every Connected Kerb host in apis.yml
+summary: |
+  No /.well-known/ discovery documents are published on any Connected Kerb host.
+  All probes returned 404 with an ordinary HTML or JSON not-found body - none of
+  these hosts is an SPA catch-all answering 200 for arbitrary paths, so these are
+  true negatives rather than false misses. Nothing was saved and no WellKnown or
+  SecurityTxt pointer is wired, because nothing was found.
+hosts:
+- host: https://www.connectedkerb.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /openapi.json, status: 404}
+  - {path: /swagger.json, status: 404}
+  - {path: /robots.txt, status: 200, note: present but not a discovery document; not saved}
+  - {path: /sitemap.xml, status: 200, note: present, 253 URLs; not a discovery document; not saved}
+- host: https://cp.connectedkerb.com
+  note: AMPECO charge point management tenant - the host that actually serves the APIs
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /llms.txt, status: 404}
+  - {path: /openapi.json, status: 404}
+  - {path: /swagger.json, status: 404}
+  - {path: /swagger, status: 404}
+- host: https://portal.connectedkerb.com
+  note: customer portal (Next.js, Microsoft Entra / MSAL gated)
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /swagger/v1/swagger.json, status: 404}
+  - {path: /openapi.json, status: 404}
+gaps:
+- No RFC 9116 security.txt on any host.
+- No RFC 8615 api-catalog, so there is no machine-readable index of the OCPI or
+  platform API endpoints Connected Kerb operates.
+- No agent card at either the canonical /.well-known/agent-card.json or the legacy
+  /.well-known/agent.json path on any host.

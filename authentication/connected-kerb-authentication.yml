@@ -1,0 +1,103 @@
+generated: '2026-08-04'
+method: searched
+source: live probes of https://cp.connectedkerb.com + platform authorization
+  documentation at https://developers.ampeco.com/reference/authorization-1
+docs: https://developers.ampeco.com/reference/authorization-1
+note: |
+  Connected Kerb publishes no first-party developer portal, no authentication guide
+  and no OpenAPI, so there is nothing in this repo to derive a spec-based auth
+  profile from. This profile was assembled instead from (a) live unauthenticated
+  probes of the two API surfaces Connected Kerb actually operates on its own hosts
+  and (b) the published contract of the platform those surfaces run on. Every
+  status code below was observed, not assumed.
+summary:
+  types: [http, oauth2]
+  api_key_in: []
+  http_schemes: [bearer, token]
+  oauth2_flows: [clientCredentials]
+  oauth2_enabled_on_this_tenant: false
+  self_service_credentials: false
+  credential_issuance: manual - commercial agreement or operator back office
+schemes:
+- name: ocpiToken
+  surface: connected-kerb:ocpi
+  type: http
+  scheme: token
+  description: >-
+    OCPI Token-based authentication per the Open Charge Point Interface
+    specification. Credentials are exchanged bilaterally through the OCPI
+    credentials module rather than issued self-service; the endpoint rejects
+    anonymous callers with an OCPI status envelope rather than a plain HTTP body.
+  endpoints:
+    versions: https://cp.connectedkerb.com/ocpi/versions
+    credentials: https://cp.connectedkerb.com/ocpi/2.2.1/credentials
+  evidence:
+  - url: https://cp.connectedkerb.com/ocpi/versions
+    http_status: 401
+    content_type: application/json
+    body: '{"status_code":2001,"status_message":"Unauthorized","timestamp":"2026-08-04T16:00:15Z"}'
+    response_headers: [OCPI-from-party-id, OCPI-from-country-code, OCPI-to-party-id,
+      OCPI-to-country-code, X-Request-ID, X-Correlation-ID]
+  - url: https://cp.connectedkerb.com/ocpi/2.2.1/credentials
+    http_status: 401
+- name: bearerAuth
+  surface: connected-kerb:public-api
+  type: http
+  scheme: bearer
+  bearerFormat: API Token
+  description: >-
+    Long-lived UUID API token passed as `Authorization: Bearer <token>`. Tokens are
+    created in the operator back office (API Access Tokens), scoped by an
+    assigned role, and optionally restricted to whitelisted source IPs or to a
+    single partner. There is no public sign-up path for API credentials.
+  evidence:
+  - url: https://cp.connectedkerb.com/public-api/resources/charge-points/v1.0
+    http_status: 401
+    content_type: application/json
+    body: '{"message":"Unauthenticated."}'
+    response_headers: ['X-App-Version: 3.225.1 (9e5dd506)', x-req-trace-id]
+- name: oauth2ClientCredentials
+  surface: connected-kerb:public-api
+  type: oauth2
+  status: not-enabled-on-this-tenant
+  description: >-
+    The platform contract documents an OAuth 2.0 client-credentials grant (RFC 6749
+    section 4.4) exchanging a hex client_secret at /public-api/oauth/token for a
+    short-lived bearer access token, with an empty scopes map. It is NOT enabled on
+    Connected Kerb's tenant - the token endpoint answers "Feature is not enabled" -
+    so in practice the only working credential on this deployment is a long-lived
+    bearer API token. That is the weaker of the two options the platform offers.
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://cp.connectedkerb.com/public-api/oauth/token
+    scopes: {}
+  evidence:
+  - url: https://cp.connectedkerb.com/public-api/oauth/token
+    method: POST
+    http_status: 404
+    body: '{"message":"Feature is not enabled"}'
+  - url: https://cp.connectedkerb.com/public-api/oauth/token
+    method: GET
+    http_status: 405
+other_gated_surfaces:
+- name: Customer portal
+  url: https://portal.connectedkerb.com/
+  auth: Microsoft Entra ID / MSAL browser sign-in (no anonymous API)
+  evidence:
+  - url: https://portal.connectedkerb.com/api/tenant/config
+    http_status: 401
+    body: '{"error":"Unauthorized"}'
+- name: Umbraco Delivery API (marketing site CMS)
+  url: https://www.connectedkerb.com/umbraco/delivery/api/v2/content
+  auth: API key required; not a published developer surface
+  evidence:
+  - url: https://www.connectedkerb.com/umbraco/delivery/api/v2/content
+    http_status: 401
+    content_type: application/problem+json
+gaps:
+- No Connected Kerb authentication documentation exists on any Connected Kerb host.
+- No self-service credential issuance for either API surface.
+- OAuth 2.0 client credentials is available in the platform but switched off on this
+  tenant, leaving long-lived bearer tokens as the only mechanism.
+- No scopes are defined for the OAuth flow even where it is enabled, so there is no
+  least-privilege scope surface to document (scopes/ is intentionally not emitted).

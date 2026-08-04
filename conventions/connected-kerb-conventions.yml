@@ -1,0 +1,112 @@
+generated: '2026-08-04'
+method: searched
+source: >-
+  live probes of https://cp.connectedkerb.com plus the published contract of the
+  platform that host runs (https://developers.ampeco.com/openapi/public-api.yaml,
+  Public API v3.226.0) and its reference pages for pagination, rate limits, data
+  formats and backward compatibility
+docs:
+  pagination: https://developers.ampeco.com/reference/pagination
+  rate_limits: https://developers.ampeco.com/reference/limits
+  data_formats: https://developers.ampeco.com/reference/data-formats
+  backward_compatibility: https://developers.ampeco.com/reference/backward-compatibility
+  authorization: https://developers.ampeco.com/reference/authorization-1
+scope_note: |
+  These are the cross-cutting semantics an integrator meets when calling the two
+  API surfaces Connected Kerb operates. Connected Kerb itself documents none of
+  them; the semantics come from the platform vendor's contract and were confirmed
+  against live responses from Connected Kerb's own host wherever an anonymous probe
+  could observe them. Recorded here so the conventions are not lost, and so the
+  documentation gap is on the record.
+authentication:
+  style: bearer token in Authorization header (platform API); OCPI Token (roaming)
+  artifact: authentication/connected-kerb-authentication.yml
+idempotency:
+  supported: false
+  idempotency_key_header: null
+  note: >-
+    There is no Idempotency-Key header or equivalent request-replay contract on
+    either surface. A handful of individual operations are documented as
+    semantically idempotent no-ops (re-attaching an already attached user,
+    re-sending an unchanged session boost flag, revoking an already-revoked
+    marketing consent), but that is per-operation behaviour, not a retry-safety
+    guarantee, so no Idempotency pointer is wired in apis.yml.
+pagination:
+  style: cursor
+  request_params:
+  - {name: per_page, type: integer, default: 100, max: 100}
+  - {name: cursor, type: string, note: 'null for the first page'}
+  response_fields:
+  - {name: data, note: array of items for the current page}
+  - {name: links.next, note: absolute URL for the next page}
+  - {name: links.first / links.last / links.prev, note: present but null under cursor paging}
+  - {name: meta.next_cursor, note: cursor token for the next page}
+  - {name: meta.path, note: base path of the collection}
+filtering:
+  style: 'bracketed filter parameters, e.g. filter[createdAfter], filter[createdBefore]'
+  note: some collections cap the queryable window (OCPI logs are limited to 30 days)
+versioning:
+  scheme: per-resource path version
+  form: /public-api/resources/{resource}/v1.0
+  ocpi_form: /ocpi/{version} with 2.1.1, 2.2 and 2.2.1 all live on this tenant
+  simultaneous_versions: true
+  policy: lifecycle/connected-kerb-lifecycle.yml
+data_formats:
+  timezone: UTC
+  datetime: ISO 8601 with explicit offset - YYYY-MM-DDThh:mm:ss+00:00 or trailing Z
+  content_type: application/json
+error_envelope:
+  format: bare JSON object
+  shape: '{"message": "<human readable string>"}'
+  rfc9457: false
+  note: >-
+    Not RFC 9457 problem+json. There is no type URI, no title/detail split and no
+    machine-readable error code on the platform API envelope, so agents have only a
+    prose string plus the HTTP status to branch on. OCPI responses are different -
+    they use the OCPI status envelope (status_code, status_message, timestamp),
+    which does carry a machine-readable numeric code.
+  ocpi_shape: '{"status_code": 2001, "status_message": "Unauthorized", "timestamp": "..."}'
+  artifact: errors/connected-kerb-problem-types.yml
+rate_limiting:
+  documented: true
+  burst_limit: 1000 requests
+  burst_window_minutes: 1
+  daily_limit: 100000 requests
+  counted: authenticated and successful calls only
+  over_limit_status: 429
+  over_limit_body: '{"message":"Too Many Attempts."}'
+  response_headers:
+  - {name: X-RateLimit-Limit, note: maximum requests in the window}
+  - {name: X-RateLimit-Remaining, note: requests left in the current window}
+  - {name: Retry-After, note: seconds to wait, on 429 only}
+  - {name: X-RateLimit-Reset, note: unix timestamp of window reset, on 429 only}
+  note: these are the platform defaults and are configurable per tenant; Connected
+    Kerb publishes no tenant-specific limits
+request_tracing:
+  header: x-req-trace-id
+  format: 'Root=1-<hex>-<hex> (AWS X-Ray trace id)'
+  observed_on: both /public-api/ and /ocpi/ responses, including anonymous 401s
+  additional_ocpi_headers: [X-Request-ID, X-Correlation-ID]
+  note: >-
+    a trace id is returned on every response including unauthenticated errors,
+    which is genuinely useful for support escalation
+platform_version_signal:
+  header: X-App-Version
+  observed_value: 3.225.1 (9e5dd506)
+  note: the running platform build is advertised on every platform API response
+expansion_and_sparse_fields:
+  supported: false
+  note: no documented field-expansion or sparse-fieldset mechanism
+metadata:
+  supported: false
+  note: no general customer-defined metadata bag on platform resources
+cross_links:
+  authentication: authentication/connected-kerb-authentication.yml
+  errors: errors/connected-kerb-problem-types.yml
+  lifecycle: lifecycle/connected-kerb-lifecycle.yml
+  conformance: conformance/connected-kerb-conformance.yml
+gaps:
+- No idempotency contract on write operations.
+- Error envelope is a prose message with no machine-readable code on the platform
+  API surface (OCPI is better on this point).
+- No first-party publication of any of these conventions by Connected Kerb.

@@ -1,0 +1,20 @@
+generated: '2026-08-04'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.connectedkerb.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec 10 23:59:59 2026 GMT
+  hsts: null
+- host: cp.connectedkerb.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 16 23:59:59 2026 GMT
+  hsts: null
+domains:
+- domain: connectedkerb.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: false

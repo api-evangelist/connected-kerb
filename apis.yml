@@ -1,18 +1,122 @@
 aid: connected-kerb
 name: Connected Kerb
-description: 'Connected Kerb is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Connected Kerb is a UK electric-vehicle charging company that designs,
+  installs, owns and operates public on-street and destination charge points, with
+  a particular focus on residential drivers who have no off-street parking. Founded
+  in 2017 and headquartered in London, it delivers long-term charging concessions
+  for local authorities, workplaces, retail destinations, car parks and residential
+  developers, and by mid-2026 operated roughly 7,800 public chargers across about
+  1,780 UK locations. Its Chameleon, Gecko, Scarab and Limpet charge points are
+  backed by a charge point management system, a driver mobile app, a customer portal
+  for site hosts and landowners, and an OCPI roaming interface used for e-mobility
+  roaming and for UK Public Charge Point Regulations 2023 open-data obligations.'
+image: https://www.connectedkerb.com/media/ltve5t2y/ev-cars-charging.jpg
 url: https://raw.githubusercontent.com/api-evangelist/connected-kerb/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment-pipeline
+x-platform: AMPECO EV charging platform (tenant cp.connectedkerb.com, X-App-Version 3.225.1)
 specificationVersion: '0.20'
+x-enrichment:
+  date: '2026-08-04'
+  status: enriched
+  artifacts_added: 8
+  pass: local-v1
 created: '2026-08-04'
 modified: '2026-08-04'
 tags:
 - Company
-apis: []
+- EV Charging
+- Electric Vehicles
+- Charge Point Operator
+- Energy
+- Transportation
+- Smart Charging
+- OCPI
+- Roaming
+- United Kingdom
+- Infrastructure
+- Sustainability
+apis:
+- aid: connected-kerb:ocpi
+  name: Connected Kerb OCPI (CPO) Interface
+  description: 'Connected Kerb operates a live Open Charge Point Interface (OCPI)
+    CPO endpoint on its own charge point management host. The version negotiation
+    endpoint and the 2.1.1 / 2.2 / 2.2.1 version detail endpoints all answer with
+    OCPI status envelopes and OCPI-from-party-id / OCPI-to-party-id headers, and are
+    token-gated exactly as the OCPI specification requires (bilateral credentials
+    exchange via the credentials module). This is the interface used for e-mobility
+    roaming with eMSPs and roaming hubs, and it is the machine-readable format the
+    UK Public Charge Point Regulations 2023 name for public charge point open data
+    (OCPI Location / EVSE / Connector objects). Connected Kerb publishes no
+    first-party OpenAPI or developer documentation for it; onboarding is by
+    commercial roaming agreement.'
+  humanURL: https://www.connectedkerb.com/our-technology/software/
+  baseURL: https://cp.connectedkerb.com/ocpi/
+  tags:
+  - OCPI
+  - Roaming
+  - EV Charging
+  - Charge Point Operator
+  x-access: gated
+  x-evidence:
+    fetched: '2026-08-04'
+    probes:
+    - url: https://cp.connectedkerb.com/ocpi/versions
+      http_status: 401
+      content_type: application/json
+      body: '{"status_code":2001,"status_message":"Unauthorized"}'
+      headers: [OCPI-from-party-id, OCPI-from-country-code, OCPI-to-party-id, OCPI-to-country-code]
+    - url: https://cp.connectedkerb.com/ocpi/2.2.1
+      http_status: 401
+    - url: https://cp.connectedkerb.com/ocpi/2.2
+      http_status: 401
+    - url: https://cp.connectedkerb.com/ocpi/2.1.1
+      http_status: 401
+    - url: https://cp.connectedkerb.com/ocpi/2.2.1/credentials
+      http_status: 401
+  properties:
+  - type: OCPI
+    url: https://evroaming.org/ocpi-downloads/
+    name: OCPI specification (EVRoaming Foundation) - the standard this endpoint implements
+- aid: connected-kerb:public-api
+  name: Connected Kerb Charge Point Platform API (AMPECO Public API tenant)
+  description: 'Connected Kerb runs its charge point management system on the AMPECO
+    EV charging platform, and the platform Public API is live on Connected Kerb''s
+    own host at cp.connectedkerb.com/public-api/. Resource endpoints answer with the
+    platform''s JSON authentication envelope and the AMPECO X-App-Version header,
+    confirming a genuine server-to-server API instance covering charge points, EVSEs,
+    locations, sessions, users, tariffs, partners, circuits and roaming. The contract
+    for this API is published by the platform vendor, not by Connected Kerb: there
+    is no Connected Kerb developer portal, no first-party OpenAPI, and no public
+    self-service credential issuance. Access is by Bearer API token issued through
+    the operator''s back office. Recorded here as an operated surface, not as a
+    Connected Kerb-published contract.'
+  humanURL: https://www.connectedkerb.com/our-technology/software/
+  baseURL: https://cp.connectedkerb.com/public-api/
+  tags:
+  - EV Charging
+  - Charge Point Management
+  - Platform API
+  x-access: gated
+  x-contract-owner: AMPECO (platform vendor) - contract not published by Connected Kerb
+  x-platform-docs: https://developers.ampeco.com/
+  x-platform-openapi: https://developers.ampeco.com/openapi/public-api.yaml
+  x-evidence:
+    fetched: '2026-08-04'
+    probes:
+    - url: https://cp.connectedkerb.com/public-api/resources/charge-points/v1.0
+      http_status: 401
+      content_type: application/json
+      body: '{"message":"Unauthenticated."}'
+      headers: ['X-App-Version: 3.225.1 (9e5dd506)']
+    - url: https://cp.connectedkerb.com/public-api/oauth/token
+      method: POST
+      http_status: 404
+      body: '{"message":"Feature is not enabled"}'
+      note: OAuth 2.0 client-credentials grant is NOT enabled on this tenant; legacy
+        bearer API tokens only.
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +124,49 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
+  url: https://www.connectedkerb.com/
+- type: Blog
+  url: https://www.connectedkerb.com/stories-reports-and-events/
+- type: Support
+  url: https://www.connectedkerb.com/contact-us/customer-support/
+- type: Pricing
+  url: https://www.connectedkerb.com/our-technology/charging-tariffs/
+- type: TermsOfService
+  url: https://www.connectedkerb.com/our-technology/software/app-ts-cs/
+- type: PrivacyPolicy
+  url: https://www.connectedkerb.com/privacy-policy/
+- type: Login
+  url: https://portal.connectedkerb.com/
+- type: GitHubOrganization
+  url: https://github.com/Connected-Kerb
+- type: Contact
+  url: https://www.connectedkerb.com/contact-us/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/connected-kerb/
+- type: Twitter
+  url: https://twitter.com/ConnectedKerb
+- type: Instagram
+  url: https://www.instagram.com/connectedkerb/
+- type: Careers
+  url: https://apply.workable.com/connected-kerb/?lng=en
+- type: Locations
+  url: https://locations.connectedkerb.com/
+- type: MobileApp
+  url: https://www.connectedkerb.com/our-technology/software/our-app/
+- type: Profile
   url: https://forgeglobal.com/connected-kerb_stock/
+  name: Forge Global secondary-market profile (harvest source)
+- type: Authentication
+  url: authentication/connected-kerb-authentication.yml
+- type: Conventions
+  url: conventions/connected-kerb-conventions.yml
+- type: Conformance
+  url: conformance/connected-kerb-conformance.yml
+- type: ErrorCatalog
+  url: errors/connected-kerb-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/connected-kerb-lifecycle.yml
+- type: DomainSecurity
+  url: security/connected-kerb-domain-security.yml
+- type: LLMsTxt
+  url: llms/connected-kerb-llms.txt

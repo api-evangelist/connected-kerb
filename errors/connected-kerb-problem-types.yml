@@ -1,0 +1,92 @@
+generated: '2026-08-04'
+method: derived
+source: >-
+  observed live responses from https://cp.connectedkerb.com plus the response
+  catalogue of the platform contract that governs those endpoints
+  (https://developers.ampeco.com/openapi/public-api.yaml, Public API v3.226.0,
+  623 operations)
+format: vendor-json
+rfc9457: false
+envelopes:
+- surface: connected-kerb:public-api
+  shape: '{"message": "<human readable string>"}'
+  machine_readable_code: false
+  note: >-
+    the only machine-readable signal is the HTTP status code; the message string is
+    prose and is not stable enough for an agent to branch on
+- surface: connected-kerb:ocpi
+  shape: '{"status_code": <int>, "status_message": "<string>", "timestamp": "<ISO 8601>"}'
+  machine_readable_code: true
+  note: OCPI defines a numeric status_code space (1xxx success, 2xxx client error,
+    3xxx server error) that is independent of the HTTP status
+observed:
+- surface: connected-kerb:public-api
+  status: 401
+  body: '{"message":"Unauthenticated."}'
+  meaning: no or invalid bearer token
+  remediation: obtain an API access token from the operator back office and send it
+    as Authorization -Bearer <token>
+  probed_url: https://cp.connectedkerb.com/public-api/resources/charge-points/v1.0
+- surface: connected-kerb:public-api
+  status: 404
+  body: '{"message":"Feature is not enabled"}'
+  meaning: the endpoint exists in the platform contract but the capability is
+    switched off for this tenant
+  remediation: use the long-lived bearer API token path; the OAuth client-credentials
+    grant is not available on this deployment
+  probed_url: https://cp.connectedkerb.com/public-api/oauth/token
+  note: >-
+    a disabled feature answering 404 rather than 501 is a real trap for a client
+    generated from the platform contract - the endpoint is described but absent
+- surface: connected-kerb:public-api
+  status: 405
+  meaning: method not allowed on an existing route
+  probed_url: https://cp.connectedkerb.com/public-api/oauth/token (GET)
+- surface: connected-kerb:public-api
+  status: 404
+  body: '{"message":"The route api could not be found."}'
+  meaning: unrouted path
+  probed_url: https://cp.connectedkerb.com/api
+- surface: connected-kerb:ocpi
+  status: 401
+  body: '{"status_code":2001,"status_message":"Unauthorized","timestamp":"2026-08-04T16:00:15Z"}'
+  meaning: missing or invalid OCPI Token credential
+  remediation: complete an OCPI credentials exchange with Connected Kerb as CPO;
+    there is no self-service route
+  probed_url: https://cp.connectedkerb.com/ocpi/versions
+- surface: connected-kerb:ocpi
+  status: 404
+  meaning: unsupported OCPI role/version path (cpo/emsp sub-paths are not routed on
+    this tenant; versions are addressed directly as /ocpi/{version})
+  probed_url: https://cp.connectedkerb.com/ocpi/cpo/versions
+- surface: cms
+  status: 401
+  content_type: application/problem+json
+  meaning: Umbraco Delivery API on the marketing site requires an API key
+  probed_url: https://www.connectedkerb.com/umbraco/delivery/api/v2/content
+documented_in_platform_contract:
+  note: >-
+    counts are the number of the 623 platform operations that declare each response
+    code; they describe the contract Connected Kerb's tenant implements, not
+    Connected Kerb's own publication
+  responses:
+  - {status: 401, operations: 622, meaning: unauthenticated}
+  - {status: 403, operations: 614, meaning: token role or partner scope forbids the action}
+  - {status: 429, operations: 537, meaning: rate limit exceeded - Too Many Attempts}
+  - {status: 404, operations: 423, meaning: resource not found}
+  - {status: 422, operations: 319, meaning: validation error}
+  - {status: 406, operations: 38, meaning: not acceptable}
+  - {status: 409, operations: 38, meaning: conflict}
+  - {status: 400, operations: 23, meaning: bad request}
+  - {status: 405, operations: 12, meaning: method not allowed}
+  - {status: 424, operations: 6, meaning: failed dependency}
+  - {status: 501, operations: 6, meaning: not implemented}
+  - {status: 408, operations: 4, meaning: request timeout}
+  - {status: 412, operations: 2, meaning: precondition failed}
+  - {status: 423, operations: 2, meaning: locked}
+  - {status: 410, operations: 1, meaning: gone}
+  - {status: 425, operations: 1, meaning: too early}
+gaps:
+- No error reference is published on any Connected Kerb host.
+- No stable machine-readable error code on the platform API surface.
+- No RFC 9457 problem+json on either API surface.

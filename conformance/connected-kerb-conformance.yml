@@ -1,0 +1,102 @@
+generated: '2026-08-04'
+method: searched
+source: >-
+  live probes of https://cp.connectedkerb.com (OCPI version negotiation, platform
+  API auth envelope) plus the published platform contract at
+  https://developers.ampeco.com/openapi/public-api.yaml (Public API v3.226.0)
+scope_note: |
+  conforms: true means observed or documented for the surfaces Connected Kerb
+  actually operates. conforms: null means the standard is materially relevant but
+  could not be verified from outside without credentials - it is not a claim either
+  way. No certification or compliance programme is published by Connected Kerb, so
+  no Compliance pointer is wired in apis.yml.
+standards:
+- id: ocpi-2.2.1
+  name: Open Charge Point Interface 2.2.1 (EVRoaming Foundation)
+  conforms: true
+  evidence: >-
+    https://cp.connectedkerb.com/ocpi/2.2.1 answers 401 with an OCPI status envelope
+    (status_code 2001) and OCPI-from-party-id / OCPI-to-party-id / OCPI-from-country-code
+    / OCPI-to-country-code headers; the credentials module is present at
+    /ocpi/2.2.1/credentials
+- id: ocpi-2.2
+  name: Open Charge Point Interface 2.2
+  conforms: true
+  evidence: https://cp.connectedkerb.com/ocpi/2.2 returns 401 OCPI status envelope
+- id: ocpi-2.1.1
+  name: Open Charge Point Interface 2.1.1
+  conforms: true
+  evidence: https://cp.connectedkerb.com/ocpi/2.1.1 returns 401 OCPI status envelope
+- id: ocpi-version-negotiation
+  name: OCPI version negotiation endpoint
+  conforms: true
+  evidence: https://cp.connectedkerb.com/ocpi/versions is live and token-gated as the
+    specification requires
+- id: uk-public-charge-point-regulations-2023
+  name: The Public Charge Point Regulations 2023 (UK) - open charge point data
+  conforms: null
+  evidence: >-
+    The regulations require UK public charge point operators to make charge point
+    data available free of charge in a machine-readable OCPI format (Location, EVSE
+    and Connector objects, OCPI 2.2.1 sections 8.3.1-8.3.3). Connected Kerb operates
+    the required OCPI 2.2.1 interface, but access is token-gated and there is no
+    public page, registration route or open-data landing page on any Connected Kerb
+    host describing how a third party obtains that access. Presence of the interface
+    is verified; free public availability of the data is not.
+- id: rfc6749-oauth2-client-credentials
+  name: OAuth 2.0 client credentials grant (RFC 6749 s4.4)
+  conforms: false
+  evidence: >-
+    documented in the platform contract with tokenUrl /public-api/oauth/token, but
+    POST to that path on Connected Kerb's tenant returns
+    {"message":"Feature is not enabled"} - the grant is switched off on this
+    deployment, leaving long-lived bearer tokens as the only credential
+- id: rfc9457-problem-details
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    platform API errors are a bare {"message":"..."} JSON object with no type URI,
+    title or detail; only the marketing site's gated Umbraco Delivery API returns
+    application/problem+json
+- id: rfc9116-security-txt
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on www, cp and portal hosts
+- id: rfc8615-well-known-uris
+  name: RFC 8615 well-known URIs (api-catalog)
+  conforms: false
+  evidence: /.well-known/api-catalog returns 404 on every host
+- id: openapi
+  name: OpenAPI description published by the provider
+  conforms: false
+  evidence: >-
+    no OpenAPI, Swagger, GraphQL SDL, AsyncAPI or MCP manifest is served from any
+    Connected Kerb host; the only contract governing these surfaces is the platform
+    vendor's OpenAPI 3.0.0 document (623 operations, 805 schemas), published at
+    developers.ampeco.com and not by Connected Kerb
+- id: a2a-agent-card
+  name: A2A Agent Card
+  conforms: false
+  evidence: /.well-known/agent-card.json and /.well-known/agent.json both 404 on
+    www, cp and portal hosts
+- id: iso8601
+  name: ISO 8601 date-time representation
+  conforms: true
+  evidence: platform data-formats contract mandates UTC ISO 8601 with explicit offset;
+    observed in the OCPI 401 envelope timestamp
+- id: ocpp
+  name: Open Charge Point Protocol (charger-to-CPMS)
+  conforms: null
+  evidence: >-
+    the charge point management platform Connected Kerb runs supports OCPP and the
+    platform contract exposes OCPP-derived notifications (BootNotification,
+    DiagnosticsStatusNotification, SecurityEventNotification), but the OCPP channel
+    is charger-to-backend and cannot be observed anonymously, so no claim is made
+    about this deployment
+- id: gdpr-uk
+  name: UK GDPR / data protection transparency
+  conforms: true
+  evidence: privacy policy published at https://www.connectedkerb.com/privacy-policy/
+    and a separate app policy at https://www.connectedkerb.com/app-policy/
+certifications_published: []
+compliance_programme_published: false
