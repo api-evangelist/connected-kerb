@@ -17,7 +17,7 @@ x-source: harvest:secondary-market
 x-tier: profiled
 x-tier-reason: enrichment-pipeline
 x-platform: AMPECO EV charging platform (tenant cp.connectedkerb.com, X-App-Version 3.225.1)
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 x-enrichment:
   date: '2026-08-04'
   status: enriched
