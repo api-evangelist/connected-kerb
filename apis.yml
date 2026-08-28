@@ -10,6 +10,17 @@ description: 'Connected Kerb is a UK electric-vehicle charging company that desi
   backed by a charge point management system, a driver mobile app, a customer portal
   for site hosts and landowners, and an OCPI roaming interface used for e-mobility
   roaming and for UK Public Charge Point Regulations 2023 open-data obligations.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.connectedkerb.com/media/ltve5t2y/ev-cars-charging.jpg
 url: https://raw.githubusercontent.com/api-evangelist/connected-kerb/refs/heads/main/apis.yml
 x-type: company
