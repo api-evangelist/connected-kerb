@@ -64,19 +64,91 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Connected Kerb is a UK electric-vehicle charging company that designs, installs, owns and operates public on-street and destination charge points, with a particular focus on residential drivers who have no off-street parking. Founded in 2017 and headquartered in London, it delivers long-term charging concessions for local authorities, workplaces, retail destinations, car parks and residential developers, and by mid-2026 operated roughly 7,800 public chargers across about 1,780 UK locations.
+Connected Kerb is a UK electric-vehicle charging company that designs, installs, owns and operates public on-street and destination charge points, with a particular focus on residential drivers who have no off-street parking. Founded in 2017 and headquartered in London, it delivers long-term charging concessions for local authorities, workplaces, retail destinations, car parks and residential developers, and by mid-2026 operated roughly 7,800 public chargers across about 1,780 UK locations. Its Chameleon, Gecko, Scarab and Limpet charge points are backed by a charge point management system, a driver mobile app, a customer portal for site hosts and landowners, and an OCPI roaming interface used for e-mobility roaming and for UK Public Charge Point Regulations 2023 open-data obligations.
 
-## API surface
+**Areas:** Company · EV Charging · Electric Vehicles · Charge Point Operator · Energy · Transportation · Smart Charging · OCPI · Roaming · United Kingdom · Infrastructure · Sustainability
 
-Connected Kerb operates two real, standards-based API surfaces on its own hosts, and documents neither of them:
+## Connected Kerb on APIs.io
 
-- **OCPI (CPO)** — `https://cp.connectedkerb.com/ocpi/` — versions 2.1.1, 2.2 and 2.2.1 are all live and token-gated per the Open Charge Point Interface credentials module. This is also the machine-readable format the UK Public Charge Point Regulations 2023 name for public charge point data.
-- **Charge point platform API** — `https://cp.connectedkerb.com/public-api/` — a server-to-server API for charge points, EVSEs, locations, sessions, users, tariffs and roaming. The contract governing it is published by the platform vendor, not by Connected Kerb.
+Everything profiled for Connected Kerb is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/connected-kerb/](https://apis.io/providers/connected-kerb/)** — or go straight to one of the APIs or properties below.
 
-There is no Connected Kerb developer portal, API reference, OpenAPI description, SDK, sandbox, status page, API changelog, `security.txt` or agent card. See `llms/connected-kerb-llms.txt` for the full picture and `conformance/`, `authentication/`, `conventions/`, `errors/`, `lifecycle/` and `security/` for the evidence.
+### APIs (2)
 
-## Links
+- [Connected Kerb OCPI (CPO) Interface](https://apis.io/apis/connected-kerb/ocpi/) — Connected Kerb operates a live Open Charge Point Interface (OCPI) CPO endpoint on its own charge point management host. The version negotiation endpoint and…
+- [Connected Kerb Charge Point Platform API (AMPECO Public API tenant)](https://apis.io/apis/connected-kerb/public-api/) — Connected Kerb runs its charge point management system on the AMPECO EV charging platform, and the platform Public API is live on Connected Kerb's own host…
 
-- https://www.connectedkerb.com/
-- https://portal.connectedkerb.com/
-- https://forgeglobal.com/connected-kerb_stock/ (secondary-market profile, harvest source)
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Connected Kerb Authentication](https://apis.io/security/connected-kerb/connected-kerb-authentication/)
+- [Connected Kerb Domain Security](https://apis.io/security/connected-kerb/connected-kerb-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.connectedkerb.com/)
+- [Pricing](https://www.connectedkerb.com/our-technology/charging-tariffs/)
+- [Support](https://www.connectedkerb.com/contact-us/customer-support/)
+- [Blog](https://www.connectedkerb.com/stories-reports-and-events/)
+- [Terms of service](https://www.connectedkerb.com/our-technology/software/app-ts-cs/)
+- [Privacy policy](https://www.connectedkerb.com/privacy-policy/)
+- [GitHub](https://github.com/Connected-Kerb)
+
+## API Evangelist rating
+
+**Kin Score 21.7** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 19.0 |
+| Access clarity | 38.2 |
+
+**Agent readiness 3.2** — human-only
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 20.5** — Energy & Utilities
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/connected-kerb/](https://apis.io/providers/connected-kerb/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Connected Kerb: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/connected-kerb/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
